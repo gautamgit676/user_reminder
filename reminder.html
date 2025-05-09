@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Remind Me Later</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Set a Reminder</h2>
+    <form id="reminderForm">
+      <label for="date">Date:</label>
+      <input type="date" id="date" required>
+
+      <label for="time">Time:</label>
+      <input type="time" id="time" required>
+
+      <label for="message">Message:</label>
+      <textarea id="message" rows="4" required></textarea>
+
+      <label for="reminder_type">Reminder Type:</label>
+      <select id="reminder_type" required>
+        <option value="email">Email</option>
+        <option value="sms">SMS</option>
+      </select>
+
+      <button type="submit" style="background-color: rgb(129, 84, 189);">Create Reminder</button>
+    </form>
+    <div id="responseMsg"></div>
+  </div>
+
+  <script>
+    document.getElementById("reminderForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const data = {
+        date: document.getElementById("date").value,
+        time: document.getElementById("time").value,
+        message: document.getElementById("message").value.trim(),
+        reminder_type: document.getElementById("reminder_type").value
+      };
+      console.log(data,'-=-=--=-=--=-=--dataaa');
+
+      try {
+        const response = await fetch("http://localhost:8000/reminder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        const msgBox = document.getElementById("responseMsg");
+
+        if (response.ok) {
+          msgBox.innerText = "✅ Reminder saved successfully!";
+          msgBox.className = "success";
+          document.getElementById("reminderForm").reset();
+        } else {
+          msgBox.innerText = "❌ Error: " + JSON.stringify(result);
+          msgBox.className = "error";
+        }
+      } catch (error) {
+        document.getElementById("responseMsg").innerText = "❌ Request failed.";
+        document.getElementById("responseMsg").className = "error";
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
